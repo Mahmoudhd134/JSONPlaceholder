@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import Counter from "./Components/Counter";
 
 function App() {
   return (
     <div>
-        This is the App
+        <Counter/>
     </div>
   )
 }
