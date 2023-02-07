@@ -1,5 +1,5 @@
-import {useAppDispatch, useAppSelector} from '../Hooks/ReduxHook'
-import {increment, decrement, incrementBy} from '../features/Counter/counterSlice'
+import {useAppDispatch, useAppSelector} from '../../Hooks/ReduxHook'
+import {increment, decrement, incrementBy} from '../../features/Counter/counterSlice'
 import {useState} from "react";
 
 const Counter = () => {
