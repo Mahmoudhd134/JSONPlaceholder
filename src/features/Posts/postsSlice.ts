@@ -1,5 +1,6 @@
-import Post from "./PostsState";
 import {createSlice, nanoid, PayloadAction} from "@reduxjs/toolkit";
+import Post from "../../DTOs/Posts/PostDto";
+import EditPostDto from "../../DTOs/Posts/EditPostDto";
 
 const initialState: Post[] =
     [
@@ -22,9 +23,14 @@ const postsSlice = createSlice({
             const {id, vote} = action.payload
             const post = state.find(p => p.id == id)!
             post.reactions[vote as keyof typeof post.reactions] += 1
+        },
+        edit: (state, action: PayloadAction<EditPostDto>) => {
+            const post = state.find(p => p.id == action.payload.id)!
+            post.title = action.payload.title
+            post.content = action.payload.content
         }
     }
 })
 
-export const {addPost, voteUp} = postsSlice.actions
+export const {addPost, voteUp, edit} = postsSlice.actions
 export default postsSlice.reducer
