@@ -1,16 +1,21 @@
-import {createSlice, nanoid, PayloadAction} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import Post from "../../DTOs/Posts/PostDto";
 import EditPostDto from "../../DTOs/Posts/EditPostDto";
+import axios from 'axios'
 
-const initialState: Post[] =
-    [
-        {
-            id: nanoid(),
-            title: 'This is a test post',
-            content: 'bal bla bla',
-            reactions: {like: 120, haha: 2, angry: 5, love: 5630, wow: 56, sad: 1}
-        }
-    ]
+const initialState: Post[] = []
+
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
+    console.log('inside fetchPosts function')
+    try {
+        const response = await axios.get<{ userId: number, id: number, title: string, body: string }[]>
+        ('https://jsonplaceholder.typicode.com/posts')
+        return response.data
+    } catch (e) {
+        //@ts-ignore
+        return e?.message
+    }
+})
 
 const postsSlice = createSlice({
     name: 'post',
@@ -29,6 +34,22 @@ const postsSlice = createSlice({
             post.title = action.payload.title
             post.content = action.payload.content
         }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchPosts.fulfilled, (state, action: PayloadAction<{ userId: number, id: number, title: string, body: string }[]>) => {
+                console.log('inside case fetchPosts.fulfilled function')
+                if (state.length != 0)
+                    return
+
+                action.payload.map<Post>(p => ({
+                    id: p.id.toString(),
+                    title: p.title,
+                    content: p.body,
+                    userId: p.userId,
+                    reactions: {like: 0, haha: 0, angry: 0, love: 0, wow: 0, sad: 0}
+                })).forEach(p => state.push(p))
+            })
     }
 })
 

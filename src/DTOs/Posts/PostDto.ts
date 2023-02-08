@@ -4,6 +4,7 @@ export default interface Post {
     id: string,
     title: string,
     content: string,
+    userId: number,
     reactions: { like: number, love: number, wow: number, haha: number, angry: number, sad: number }
 }
 
@@ -20,5 +21,6 @@ export const emptyPost: Post = {
     id: nanoid(),
     content: '',
     title: '',
+    userId: 0,
     reactions: {like: 0, haha: 0, angry: 0, love: 0, wow: 0, sad: 0}
 }

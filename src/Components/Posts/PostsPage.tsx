@@ -2,17 +2,36 @@ import {useAppDispatch, useAppSelector} from "../../Hooks/ReduxHook";
 import {Link, useLocation} from "react-router-dom";
 import Post, {reactions} from "../../DTOs/Posts/PostDto";
 import Imogy from "./Imogy";
-import React, {useState} from "react";
-import {voteUp} from "../../features/Posts/postsSlice";
+import React, {useEffect, useState} from "react";
+import {fetchPosts, voteUp} from "../../features/Posts/postsSlice";
 import Modes from './Modes'
 import EditPost from './EditPost'
+import PostAuthor from "./PostAuthor";
+import {fetchUsers} from "../../features/Users/UsersSlice";
 
 const PostsPage = () => {
     const [mode, setMode] = useState<Modes>(Modes.Show)
     const [postToEdit, setPostToEdit] = useState<Post | null>(null)
     const posts = useAppSelector(state => state.posts)
     const dispatch = useAppDispatch()
-    const location = useLocation()
+    const location = useLocation();
+
+    const usersLength = useAppSelector(s => s.users.length)
+
+    useEffect(() => {
+        if (usersLength == 0)
+            dispatch(fetchUsers())
+    }, [usersLength])
+
+    useEffect(() => {
+        if (posts.length == 0) {
+            dispatch(fetchPosts())
+        }
+    }, [posts.length, dispatch]);
+
+
+    if (posts.length == 0)
+        return <h1>Loading...</h1>
 
     const updateVote = (vote: string, id: string) => {
         return (e: React.MouseEvent) => {
@@ -39,6 +58,7 @@ const PostsPage = () => {
                         </div>
                         <div className={'card-body'}>
                             <div className={'card-text'}>{p.content}</div>
+                            <div className={'card-text my-4'}>by: <b><PostAuthor post={p}/></b></div>
                             <div className={'row justify-content-sm-start justify-content-center mt-3'}>
                                 <Imogy shape={reactions.like} text={p.reactions.like}
                                        onClick={updateVote('like', p.id)}/>
