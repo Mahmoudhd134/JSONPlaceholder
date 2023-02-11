@@ -13,6 +13,8 @@ const PostsPage = () => {
     const [mode, setMode] = useState<Modes>(Modes.Show)
     const [postToEdit, setPostToEdit] = useState<Post | null>(null)
     const posts = useAppSelector(state => state.posts)
+    const [take, setTake] = useState(10)
+    const showedPosts = posts.slice(0, take)
     const dispatch = useAppDispatch()
     const location = useLocation();
 
@@ -44,7 +46,7 @@ const PostsPage = () => {
         <div className={'container'}>
             {mode == Modes.Show && (<>
                 <h3>Posts</h3>
-                {posts.map(p => (
+                {showedPosts.map(p => (
                     <div key={p.id} className={'card text-sm-start text-center my-3 border border-5 rounded rounded-5'}>
                         <div className={'card-header w-100 d-flex'}>{p.title}
                             <span className={'ms-auto'}
@@ -75,6 +77,15 @@ const PostsPage = () => {
                             </div>
                         </div>
                     </div>))}
+
+                <div className={'row my-3 d-flex justify-content-center'}>
+                    <button className={'btn btn-outline-primary w-50'}
+                            onClick={e => {
+                                setTake(p => p + 10)
+                            }}>
+                        Show More
+                    </button>
+                </div>
 
                 <div className={'row my-3'}>
                     <div className={'col'}>

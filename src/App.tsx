@@ -5,6 +5,7 @@ import AddPost from "./Components/Posts/AddPost";
 import GlobalNavbar from "./Components/GlobalNavbar";
 import Home from "./Components/Home";
 import UsersPage from "./Components/Users/UsersPage";
+import User from "./Components/Users/User";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                     </Route>
                     <Route path={'/users'}>
                         <Route index element={<UsersPage/>}/>
+                        <Route path={':id'} element={<User/>}/>
                     </Route>
                 </Routes>
             </BrowserRouter>
