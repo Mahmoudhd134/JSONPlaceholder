@@ -1,5 +1,6 @@
 import {Address} from "./Address";
 import {Company} from "./Company";
+import UserTodoDto from "./UserTodoDto";
 
 export interface User {
     id: number;
@@ -10,4 +11,5 @@ export interface User {
     phone: string;
     website: string;
     company: Company;
+    todos: UserTodoDto[]
 }
