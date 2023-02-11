@@ -6,6 +6,7 @@ import GlobalNavbar from "./Components/GlobalNavbar";
 import Home from "./Components/Home";
 import UsersPage from "./Components/Users/UsersPage";
 import User from "./Components/Users/User";
+import Post from "./Components/Posts/Post";
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                     <Route path={'/counter'} element={<Counter/>}/>
                     <Route path={'/posts'}>
                         <Route index element={<PostsPage/>}/>
+                        <Route path={':id'} element={<Post/>}/>
                         <Route path={'add'} element={<AddPost/>}/>
                     </Route>
                     <Route path={'/users'}>

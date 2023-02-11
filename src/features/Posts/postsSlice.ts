@@ -3,6 +3,7 @@ import Post from "../../DTOs/Posts/PostDto";
 import EditPostDto from "../../DTOs/Posts/EditPostDto";
 import axios from 'axios'
 import PostsState from "./PostsState";
+import CommentDto from "../../DTOs/Posts/CommentDto";
 
 const initialState: PostsState = {
     posts: [],
@@ -10,7 +11,6 @@ const initialState: PostsState = {
 }
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-    console.log('inside fetchPosts function')
     try {
         const response = await axios.get<{ userId: number, id: number, title: string, body: string }[]>
         ('https://jsonplaceholder.typicode.com/posts')
@@ -18,6 +18,26 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
     } catch (e) {
         //@ts-ignore
         return e?.message
+    }
+})
+
+export const fetchPostsById = createAsyncThunk('posts/fetchPostsById', async (id: number) => {
+    try {
+        const response = await axios.get<{ userId: number, id: number, title: string, body: string }>
+        ('https://jsonplaceholder.typicode.com/posts/' + id)
+        return response.data
+    } catch (e) {
+        //@ts-ignore
+        return e?.message
+    }
+})
+
+export const fetchComments = createAsyncThunk('posts/fetchComments', async (postId: number) => {
+    try {
+        const response = await axios.get<CommentDto[]>(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`)
+        return {postId: postId, data: response.data}
+    } catch (e) {
+        console.error(e)
     }
 })
 
@@ -45,20 +65,32 @@ const postsSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchPosts.fulfilled, (state, action: PayloadAction<{ userId: number, id: number, title: string, body: string }[]>) => {
-                console.log('inside case fetchPosts.fulfilled function')
-                if (state.posts.length != 0)
-                    return
-
-                action.payload.map<Post>(p => ({
+                state.posts = action.payload.map<Post>(p => ({
                     id: p.id.toString(),
                     title: p.title,
                     content: p.body,
                     userId: p.userId,
-                    reactions: {like: 0, haha: 0, angry: 0, love: 0, wow: 0, sad: 0}
-                })).forEach(p => state.posts.push(p))
+                    reactions: {like: 0, haha: 0, angry: 0, love: 0, wow: 0, sad: 0},
+                    comments: null
+                }))
+            })
+            .addCase(fetchPostsById.fulfilled, (state, action: PayloadAction<{ userId: number, id: number, title: string, body: string }>) => {
+                if(state.posts.find(p => p.id == action.payload.id.toString()))
+                    return
+                state.posts.push({
+                    id: action.payload.id.toString(),
+                    title: action.payload.title,
+                    content: action.payload.body,
+                    userId: action.payload.userId,
+                    reactions: {like: 0, haha: 0, angry: 0, love: 0, wow: 0, sad: 0},
+                    comments: null
+                })
+            })
+            .addCase(fetchComments.fulfilled, (state, action: PayloadAction<{ postId: number, data: CommentDto[] } | undefined>) => {
+                state.posts.find(p => +p.id == action.payload?.postId)!.comments = action.payload?.data!
             })
     }
 })
 
-export const {addPost, voteUp, edit,increaseCurrentPostsShowedNumber} = postsSlice.actions
+export const {addPost, voteUp, edit, increaseCurrentPostsShowedNumber} = postsSlice.actions
 export default postsSlice.reducer

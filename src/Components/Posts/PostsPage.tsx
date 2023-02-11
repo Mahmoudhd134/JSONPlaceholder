@@ -7,7 +7,6 @@ import {fetchPosts, increaseCurrentPostsShowedNumber, voteUp} from "../../featur
 import Modes from './Modes'
 import EditPost from './EditPost'
 import PostAuthor from "./PostAuthor";
-import {fetchUsers} from "../../features/Users/UsersSlice";
 
 const PostsPage = () => {
     const [mode, setMode] = useState<Modes>(Modes.Show)
@@ -17,18 +16,9 @@ const PostsPage = () => {
     const dispatch = useAppDispatch()
     const location = useLocation();
 
-    const usersLength = useAppSelector(s => s.users.length)
-
     useEffect(() => {
-        if (usersLength == 0)
-            dispatch(fetchUsers())
-    }, [usersLength])
-
-    useEffect(() => {
-        if (posts.posts.length == 0) {
-            dispatch(fetchPosts())
-        }
-    }, [posts.posts.length, dispatch]);
+        dispatch(fetchPosts())
+    }, []);
 
 
     if (posts.posts.length == 0)
@@ -60,6 +50,7 @@ const PostsPage = () => {
                         <div className={'card-body'}>
                             <div className={'card-text'}>{p.content}</div>
                             <div className={'card-text my-4'}>by: <b><PostAuthor post={p}/></b></div>
+                            <div className={'card-text my-4'}><Link to={'/posts/' + p.id}>comments</Link></div>
                             <div className={'row justify-content-sm-start justify-content-center mt-3'}>
                                 <Imogy shape={reactions.like} text={p.reactions.like}
                                        onClick={updateVote('like', p.id)}/>
