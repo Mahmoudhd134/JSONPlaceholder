@@ -3,7 +3,7 @@ import {Link, useLocation} from "react-router-dom";
 import Post, {reactions} from "../../DTOs/Posts/PostDto";
 import Imogy from "./Imogy";
 import React, {useEffect, useState} from "react";
-import {fetchPosts, voteUp} from "../../features/Posts/postsSlice";
+import {fetchPosts, increaseCurrentPostsShowedNumber, voteUp} from "../../features/Posts/postsSlice";
 import Modes from './Modes'
 import EditPost from './EditPost'
 import PostAuthor from "./PostAuthor";
@@ -13,8 +13,7 @@ const PostsPage = () => {
     const [mode, setMode] = useState<Modes>(Modes.Show)
     const [postToEdit, setPostToEdit] = useState<Post | null>(null)
     const posts = useAppSelector(state => state.posts)
-    const [take, setTake] = useState(10)
-    const showedPosts = posts.slice(0, take)
+    const showedPosts = posts.posts.slice(0, posts.currentShowedNumber)
     const dispatch = useAppDispatch()
     const location = useLocation();
 
@@ -26,13 +25,13 @@ const PostsPage = () => {
     }, [usersLength])
 
     useEffect(() => {
-        if (posts.length == 0) {
+        if (posts.posts.length == 0) {
             dispatch(fetchPosts())
         }
-    }, [posts.length, dispatch]);
+    }, [posts.posts.length, dispatch]);
 
 
-    if (posts.length == 0)
+    if (posts.posts.length == 0)
         return <h1>Loading...</h1>
 
     const updateVote = (vote: string, id: string) => {
@@ -81,7 +80,7 @@ const PostsPage = () => {
                 <div className={'row my-3 d-flex justify-content-center'}>
                     <button className={'btn btn-outline-primary w-50'}
                             onClick={e => {
-                                setTake(p => p + 10)
+                                dispatch(increaseCurrentPostsShowedNumber())
                             }}>
                         Show More
                     </button>
