@@ -7,6 +7,8 @@ import Home from "./Components/Home";
 import UsersPage from "./Components/Users/UsersPage";
 import User from "./Components/Users/User";
 import Post from "./Components/Posts/Post";
+import AlbumsPage from "./Components/Albums/AlbumsPage";
+import Album from "./Components/Albums/Album";
 
 function App() {
     return (
@@ -24,6 +26,10 @@ function App() {
                     <Route path={'/users'}>
                         <Route index element={<UsersPage/>}/>
                         <Route path={':id'} element={<User/>}/>
+                    </Route>
+                    <Route path={'/albums'}>
+                        <Route index element={<AlbumsPage/>}/>
+                        <Route path={':id'} element={<Album/>}/>
                     </Route>
                 </Routes>
             </BrowserRouter>

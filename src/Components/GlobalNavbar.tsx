@@ -21,6 +21,9 @@ const GlobalNavbar = () => {
                         <li className="nav-item">
                             <Link className="nav-link" to={'/users'}>Users</Link>
                         </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to={'/albums'}>Albums</Link>
+                        </li>
                         {/*<li className="nav-item dropdown">*/}
                         {/*    <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"*/}
                         {/*       aria-expanded="false">*/}
